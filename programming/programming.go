@@ -7,6 +7,11 @@ import (
 	"github.com/renato0307/learning-go-lib/programming"
 )
 
+// postUuidOutput is the output of the "POST /programming/uuid" action
+type postUuidOutput struct {
+	UUID string `json:"uuid"`
+}
+
 // SetRouterGroup defines all the routes for the programming functions
 func SetRouterGroup(base *gin.RouterGroup) *gin.RouterGroup {
 	programmingGroup := base.Group("/programming")
@@ -29,7 +34,8 @@ func postUuid() gin.HandlerFunc {
 		noHyphensParamValue := c.Query("no-hyphens")
 		withoutHyphens := noHyphensParamValue == "true"
 
-		output := programming.NewUuid(withoutHyphens)
+		uuid := programming.NewUuid(withoutHyphens)
+		output := postUuidOutput{UUID: uuid}
 
 		c.JSON(http.StatusOK, output)
 	}

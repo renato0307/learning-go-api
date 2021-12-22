@@ -1,6 +1,7 @@
 package programming
 
 import (
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -29,9 +30,12 @@ func TestPostUuid(t *testing.T) {
 	// assert
 	assert.Equal(t, w.Code, http.StatusOK)
 
-	body := w.Body.String()
-	assert.Len(t, body, 38)
-	assert.Contains(t, body, "-")
+	output := postUuidOutput{}
+	err := json.Unmarshal(w.Body.Bytes(), &output)
+
+	assert.Nil(t, err)
+	assert.Len(t, output.UUID, 36)
+	assert.Contains(t, output.UUID, "-")
 }
 
 func TestPostUuidWithNoHyphen(t *testing.T) {
@@ -46,7 +50,10 @@ func TestPostUuidWithNoHyphen(t *testing.T) {
 	// assert
 	assert.Equal(t, w.Code, http.StatusOK)
 
-	body := w.Body.String()
-	assert.Len(t, body, 34)
-	assert.NotContains(t, body, "-")
+	output := postUuidOutput{}
+	err := json.Unmarshal(w.Body.Bytes(), &output)
+
+	assert.Nil(t, err)
+	assert.Len(t, output.UUID, 32)
+	assert.NotContains(t, output.UUID, "-")
 }
