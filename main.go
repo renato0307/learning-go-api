@@ -1,6 +1,9 @@
 package main
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+	"github.com/renato0307/learning-go-api/programming"
+)
 
 func main() {
 	r := gin.Default()
@@ -9,5 +12,9 @@ func main() {
 			"message": "Hello, welcome to the learning-go-api",
 		})
 	})
-	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+
+	base := r.Group("/v1")
+	programming.SetRouterGroup(base)
+
+	r.Run()
 }
