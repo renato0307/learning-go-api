@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/renato0307/learning-go-api/programming"
+	programminglib "github.com/renato0307/learning-go-lib/programming"
 )
 
 func main() {
@@ -14,7 +15,9 @@ func main() {
 	})
 
 	base := r.Group("/v1")
-	programming.SetRouterGroup(base)
+
+	p := programminglib.ProgrammingFunctions{}
+	programming.SetRouterGroup(&p, base)
 
 	r.Run()
 }

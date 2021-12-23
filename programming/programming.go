@@ -13,10 +13,10 @@ type postUuidOutput struct {
 }
 
 // SetRouterGroup defines all the routes for the programming functions
-func SetRouterGroup(base *gin.RouterGroup) *gin.RouterGroup {
+func SetRouterGroup(p programming.Interface, base *gin.RouterGroup) *gin.RouterGroup {
 	programmingGroup := base.Group("/programming")
 	{
-		programmingGroup.POST("/uuid", postUuid())
+		programmingGroup.POST("/uuid", postUuid(p))
 		// Add here more functions in the programming category
 	}
 
@@ -29,12 +29,12 @@ func SetRouterGroup(base *gin.RouterGroup) *gin.RouterGroup {
 // UUIDs without hyphens.
 //
 // It returns 200 on success.
-func postUuid() gin.HandlerFunc {
+func postUuid(p programming.Interface) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		noHyphensParamValue := c.Query("no-hyphens")
 		withoutHyphens := noHyphensParamValue == "true"
 
-		uuid := programming.NewUuid(withoutHyphens)
+		uuid := p.NewUuid(withoutHyphens)
 		output := postUuidOutput{UUID: uuid}
 
 		c.JSON(http.StatusOK, output)
