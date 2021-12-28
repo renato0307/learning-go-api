@@ -2,10 +2,9 @@ module github.com/renato0307/learning-go-api
 
 go 1.17
 
-require github.com/gin-gonic/gin v1.7.7
-
 require (
-	github.com/renato0307/learning-go-lib v0.0.7 // change
+	github.com/gin-gonic/gin v1.7.7
+	github.com/renato0307/learning-go-lib v0.0.9
 	github.com/stretchr/testify v1.7.0
 )
 
