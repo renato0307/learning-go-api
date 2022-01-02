@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/renato0307/learning-go-api/apierror"
 	"github.com/renato0307/learning-go-lib/finance"
+	"github.com/rs/zerolog/log"
 )
 
 type getCurrConvOutput struct {
@@ -28,6 +29,12 @@ func getCurrConv(f finance.Interface) gin.HandlerFunc {
 		from := c.Query("from")
 		to := c.Query("to")
 		amount := c.Query("amount")
+
+		log.Debug().
+			Str("from", from).
+			Str("to", to).
+			Str("amount", amount).
+			Msg("running currency converter")
 
 		if from == "" {
 			msg := "error: 'from' parameter is required"
