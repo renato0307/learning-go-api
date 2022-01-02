@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/renato0307/learning-go-api/apierror"
 	"github.com/renato0307/learning-go-lib/programming"
 )
 
@@ -23,15 +24,16 @@ func postJwtDebugger(p programming.Interface) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenBytes, err := ioutil.ReadAll(c.Request.Body)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, "error reading body")
+			msg := "error reading body"
+			c.JSON(http.StatusBadRequest, apierror.New(msg))
 			return
 		}
 
 		tokenString := string(tokenBytes)
 		header, payload, err := p.DebugJWT(tokenString)
 		if err != nil {
-			message := fmt.Sprintf("invalid token: %s", err.Error())
-			c.JSON(http.StatusBadRequest, message)
+			msg := fmt.Sprintf("invalid token: %s", err.Error())
+			c.JSON(http.StatusBadRequest, apierror.New(msg))
 			return
 		}
 

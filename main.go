@@ -5,9 +5,9 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/renato0307/learning-go-api/finance" // new
+	"github.com/renato0307/learning-go-api/finance"
 	"github.com/renato0307/learning-go-api/programming"
-	financelib "github.com/renato0307/learning-go-lib/finance" // new
+	financelib "github.com/renato0307/learning-go-lib/finance"
 	programminglib "github.com/renato0307/learning-go-lib/programming"
 )
 
@@ -24,15 +24,15 @@ func main() {
 	p := programminglib.ProgrammingFunctions{}
 	programming.SetRouterGroup(&p, base)
 
-	useDefaultUrl := ""                                        // new
-	apiKey := getRequiredEnv("CURRCONV_API_KEY")               // new
-	f := financelib.NewFinanceFunctions(useDefaultUrl, apiKey) // new
-	finance.SetRouterGroup(&f, base)                           // new
+	useDefaultUrl := ""
+	apiKey := getRequiredEnv("CURRCONV_API_KEY")
+	f := financelib.NewFinanceFunctions(useDefaultUrl, apiKey)
+	finance.SetRouterGroup(&f, base)
 
 	r.Run()
 }
 
-func getRequiredEnv(key string) string { // new
+func getRequiredEnv(key string) string {
 	value, exists := os.LookupEnv(key)
 
 	if !exists {

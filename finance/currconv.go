@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/renato0307/learning-go-api/apierror"
 	"github.com/renato0307/learning-go-lib/finance"
 )
 
@@ -29,30 +30,35 @@ func getCurrConv(f finance.Interface) gin.HandlerFunc {
 		amount := c.Query("amount")
 
 		if from == "" {
-			c.JSON(http.StatusBadRequest, "error: 'from' parameter is required")
+			msg := "error: 'from' parameter is required"
+			c.JSON(http.StatusBadRequest, apierror.New(msg))
 			return
 		}
 
 		if to == "" {
-			c.JSON(http.StatusBadRequest, "error: 'to' parameter is required")
+			msg := "error: 'to' parameter is required"
+			c.JSON(http.StatusBadRequest, apierror.New(msg))
 			return
 		}
 
 		if amount == "" {
-			c.JSON(http.StatusBadRequest, "error: 'amount' parameter is required")
+			msg := "error: 'amount' parameter is required"
+			c.JSON(http.StatusBadRequest, apierror.New(msg))
 			return
 		}
 
 		amountFloat, err := strconv.ParseFloat(amount, 64)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, "error: 'amount' is not a valid number")
+			msg := "error: 'amount' is not a valid number"
+			c.JSON(http.StatusBadRequest, apierror.New(msg))
 			return
 		}
 
 		convertAmount, err := f.ConvertCurrency(from, to, amountFloat)
 		if err != nil {
-			err = fmt.Errorf("error converting the currency: %s", err.Error())
-			c.JSON(http.StatusInternalServerError, err.Error())
+			msg := fmt.Sprintf("error converting the currency: %s", err.Error())
+			c.JSON(http.StatusInternalServerError, apierror.New(msg))
+			return
 		}
 
 		output := getCurrConvOutput{

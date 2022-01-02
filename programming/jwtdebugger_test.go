@@ -8,6 +8,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/renato0307/learning-go-api/apierror"
 	programminglib "github.com/renato0307/learning-go-lib/programming"
 	"github.com/stretchr/testify/assert"
 )
@@ -63,4 +64,5 @@ func TestPostJwtDebugWithInvalidToken(t *testing.T) {
 	assert.Contains(t, w.Body.String(), err.Error())
 
 	mockInterface.AssertExpectations(t)
+	apierror.AssertIsValid(t, w.Body.Bytes())
 }

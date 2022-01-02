@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/renato0307/learning-go-api/apierror"
 	financelib "github.com/renato0307/learning-go-lib/finance"
 	"github.com/stretchr/testify/assert"
 )
@@ -64,6 +65,7 @@ func TestGetCurrConvWithMissingFrom(t *testing.T) {
 
 	// assert
 	assert.Equal(t, w.Code, http.StatusBadRequest)
+	apierror.AssertIsValid(t, w.Body.Bytes())
 }
 
 func TestGetCurrConvWithMissingTo(t *testing.T) {
@@ -83,6 +85,7 @@ func TestGetCurrConvWithMissingTo(t *testing.T) {
 
 	// assert
 	assert.Equal(t, w.Code, http.StatusBadRequest)
+	apierror.AssertIsValid(t, w.Body.Bytes())
 }
 
 func TestGetCurrConvWithMissingAmount(t *testing.T) {
@@ -102,6 +105,7 @@ func TestGetCurrConvWithMissingAmount(t *testing.T) {
 
 	// assert
 	assert.Equal(t, w.Code, http.StatusBadRequest)
+	apierror.AssertIsValid(t, w.Body.Bytes())
 }
 
 func TestGetCurrConvWithInvalidAmount(t *testing.T) {
@@ -122,6 +126,7 @@ func TestGetCurrConvWithInvalidAmount(t *testing.T) {
 
 	// assert
 	assert.Equal(t, w.Code, http.StatusBadRequest)
+	apierror.AssertIsValid(t, w.Body.Bytes())
 }
 
 func TestGetCurrConvWithLibraryError(t *testing.T) {
@@ -145,5 +150,6 @@ func TestGetCurrConvWithLibraryError(t *testing.T) {
 
 	// assert
 	assert.Equal(t, w.Code, http.StatusInternalServerError)
+	apierror.AssertIsValid(t, w.Body.Bytes())
 	mockInterface.AssertExpectations(t)
 }
