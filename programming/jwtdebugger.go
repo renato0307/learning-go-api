@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/renato0307/learning-go-api/apierror"
 	"github.com/renato0307/learning-go-lib/programming"
+	"github.com/rs/zerolog/log"
 )
 
 // postJwtDebuggerOutput is the output of the "POST /programming/jwt" action
@@ -22,6 +23,9 @@ type postJwtDebuggerOutput struct {
 // Returns HTTP 400 if the token is not valid.
 func postJwtDebugger(p programming.Interface) gin.HandlerFunc {
 	return func(c *gin.Context) {
+
+		log.Debug().Msg("running jwt debugger")
+
 		tokenBytes, err := ioutil.ReadAll(c.Request.Body)
 		if err != nil {
 			msg := "error reading body"
