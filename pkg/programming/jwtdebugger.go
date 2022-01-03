@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/renato0307/learning-go-api/apierror"
+	"github.com/renato0307/learning-go-api/internal/apierror"
 	"github.com/renato0307/learning-go-lib/programming"
 	"github.com/rs/zerolog/log"
 )

@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/renato0307/learning-go-api/apierror"
+	"github.com/renato0307/learning-go-api/internal/apierror"
 	programminglib "github.com/renato0307/learning-go-lib/programming"
 	"github.com/stretchr/testify/assert"
 )

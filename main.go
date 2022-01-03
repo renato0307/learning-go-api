@@ -5,20 +5,28 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/renato0307/learning-go-api/finance"
-	"github.com/renato0307/learning-go-api/programming"
+	"github.com/renato0307/learning-go-api/internal/middleware"
+	"github.com/renato0307/learning-go-api/pkg/finance"
+	"github.com/renato0307/learning-go-api/pkg/programming"
 	financelib "github.com/renato0307/learning-go-lib/finance"
 	programminglib "github.com/renato0307/learning-go-lib/programming"
 )
 
 func main() {
-	r := gin.Default()
+	// Initialize Gin
+	gin.SetMode(gin.ReleaseMode)
+	r := gin.New()
+	r.Use(middleware.StructuredLogger())
+	r.Use(gin.Recovery())
+
+	// Default route
 	r.GET("/", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "Hello, welcome to the learning-go-api",
 		})
 	})
 
+	// Utility functions routes
 	base := r.Group("/v1")
 
 	p := programminglib.ProgrammingFunctions{}
@@ -29,6 +37,7 @@ func main() {
 	f := financelib.NewFinanceFunctions(useDefaultUrl, apiKey)
 	finance.SetRouterGroup(&f, base)
 
+	// Start serving request
 	r.Run()
 }
 

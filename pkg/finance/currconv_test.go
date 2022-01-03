@@ -8,7 +8,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/renato0307/learning-go-api/apierror"
+	"github.com/renato0307/learning-go-api/internal/apierror"
 	financelib "github.com/renato0307/learning-go-lib/finance"
 	"github.com/stretchr/testify/assert"
 )
