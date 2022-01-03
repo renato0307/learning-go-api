@@ -16,7 +16,7 @@ func main() {
 	// Initialize Gin
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
-	r.Use(middleware.StructuredLogger())
+	r.Use(middleware.DefaultStructuredLogger())
 	r.Use(gin.Recovery())
 
 	// Default route
