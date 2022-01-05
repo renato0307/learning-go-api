@@ -21,5 +21,4 @@ func AssertIsValid(t *testing.T, jsonData []byte) {
 
 	assert.Nil(t, err)
 	assert.NotEmpty(t, apiError.Message)
-
 }

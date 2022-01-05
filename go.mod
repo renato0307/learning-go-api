@@ -4,6 +4,7 @@ go 1.17
 
 require (
 	github.com/gin-gonic/gin v1.7.7
+	github.com/go-playground/assert/v2 v2.0.1
 	github.com/renato0307/learning-go-lib v0.0.9
 	github.com/rs/zerolog v1.26.1
 	github.com/stretchr/testify v1.7.0
