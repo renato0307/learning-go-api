@@ -27,3 +27,6 @@ func TestGetRequiredEnvWithMissingEnvironment(t *testing.T) {
 		getRequiredEnv("MISSING_ENV_VAR_NAME")
 	})
 }
+
+func TestNewAuthenticator(t *testing.T) {
+}
