@@ -23,6 +23,13 @@ const (
 
 func Authenticator(ac *AuthenticatorConfig) gin.HandlerFunc {
 	return func(c *gin.Context) {
+
+		// Ignore the root as it is used for the liveness probes
+		if c.Request.URL.Path == "/" {
+			return
+		}
+
+		// Gets the JWT from the Authentication header
 		authHeader := c.GetHeader("Authentication")
 
 		if authHeader == "" {
@@ -33,6 +40,7 @@ func Authenticator(ac *AuthenticatorConfig) gin.HandlerFunc {
 			return
 		}
 
+		// Validates the JWT
 		token, err := validateToken(ac, authHeader)
 		if err != nil {
 			log.Debug().Err(err).Msg("JWT not valid")
@@ -42,6 +50,7 @@ func Authenticator(ac *AuthenticatorConfig) gin.HandlerFunc {
 			return
 		}
 
+		// Put the client identifier in the Gin context
 		ci, _ := token.Get(ClientIdKey)
 		c.Set(ClientIdKey, ci)
 	}

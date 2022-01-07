@@ -38,6 +38,23 @@ func TestAuthenticatorNoAuthHeader(t *testing.T) {
 	apierror.AssertIsValid(t, w.Body.Bytes())
 }
 
+func TestAuthenticatorRootPathSkipsAuth(t *testing.T) {
+
+	// arrange - init gin to use the structured logger middleware
+	r := gin.New()
+	r.Use(Authenticator(nil))
+	r.Use(gin.Recovery())
+
+	// arrange - set the routes
+	r.GET("/", func(c *gin.Context) {})
+
+	// act
+	w := apitesting.PerformRequest(r, "GET", "/")
+
+	// assert
+	assert.Equal(t, http.StatusOK, w.Code)
+}
+
 func TestAuthenticatorWithJWT(t *testing.T) {
 	// arrange - generate key, keyset and JWT
 	key := generateKey(t)
