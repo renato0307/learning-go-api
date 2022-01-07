@@ -19,6 +19,7 @@ type AuthenticatorConfig struct {
 const (
 	TokenUseKey = "token_use"
 	ClientIdKey = "client_id"
+	ScopeKey    = "scope"
 )
 
 func Authenticator(ac *AuthenticatorConfig) gin.HandlerFunc {
@@ -53,6 +54,10 @@ func Authenticator(ac *AuthenticatorConfig) gin.HandlerFunc {
 		// Put the client identifier in the Gin context
 		ci, _ := token.Get(ClientIdKey)
 		c.Set(ClientIdKey, ci)
+
+		// Puts the scopes in the Gin context
+		scope, _ := token.Get(ScopeKey)
+		c.Set(ScopeKey, scope)
 	}
 }
 

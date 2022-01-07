@@ -27,6 +27,7 @@ func main() {
 	r := gin.New()
 	r.Use(middleware.DefaultStructuredLogger())
 	r.Use(middleware.Authenticator(newAuthenticatorConfig()))
+	r.Use(middleware.Authorizer())
 	r.Use(gin.Recovery())
 
 	// Default route
