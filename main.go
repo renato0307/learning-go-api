@@ -15,12 +15,18 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+const (
+	CURRCONV_API_KEY   = "CURRCONV_API_KEY"
+	AUTH_TOKEN_ISS     = "AUTH_TOKEN_ISS"
+	AUTH_JWKS_LOCATION = "AUTH_JWKS_LOCATION"
+)
+
 func main() {
 	// Initialize Gin
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
 	r.Use(middleware.DefaultStructuredLogger())
-	r.Use(newAuthenticator())
+	r.Use(middleware.Authenticator(newAuthenticatorConfig()))
 	r.Use(gin.Recovery())
 
 	// Default route
@@ -37,7 +43,7 @@ func main() {
 	programming.SetRouterGroup(&p, base)
 
 	useDefaultUrl := ""
-	apiKey := getRequiredEnv("CURRCONV_API_KEY")
+	apiKey := getRequiredEnv(CURRCONV_API_KEY)
 	f := financelib.NewFinanceFunctions(useDefaultUrl, apiKey)
 	finance.SetRouterGroup(&f, base)
 
@@ -55,8 +61,18 @@ func getRequiredEnv(key string) string {
 	return value
 }
 
-func newAuthenticator() gin.HandlerFunc {
-	jwksLocation := getRequiredEnv("AUTH_JWKS_LOCATION")
+// newAuthenticatorConfig gathers all authentication related information to set
+// up the Authenticator middleware configuration.
+//
+// It requires the definition two environment variables:
+//
+// AUTH_JWKS_LOCATION: https://cognito-idp.$AWS_REGION.amazonaws.com/$POOL_ID/.well-known/jwks.json
+//
+// AUTH_TOKEN_ISS: https://cognito-idp.$AWS_REGION.amazonaws.com/$POOL_ID
+func newAuthenticatorConfig() *middleware.AuthenticatorConfig {
+
+	// Gets the JSON Web Key Set download URL
+	jwksLocation := getRequiredEnv(AUTH_JWKS_LOCATION)
 	r, err := http.Get(jwksLocation)
 	if err != nil {
 		msg := "cannot get the JWKS content for authentication"
@@ -65,6 +81,7 @@ func newAuthenticator() gin.HandlerFunc {
 	}
 	defer r.Body.Close()
 
+	// Downloads the JSON Web Key Set
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		msg := "cannot read the JWKS content for authentication"
@@ -72,14 +89,16 @@ func newAuthenticator() gin.HandlerFunc {
 		panic(msg)
 	}
 
+	// Creates the AuthenticatorConfig structure
 	config := middleware.AuthenticatorConfig{
 		KeySetJSON: body,
-		Issuer:     getRequiredEnv("AUTH_TOKEN_ISS"),
+		Issuer:     getRequiredEnv(AUTH_TOKEN_ISS),
 	}
 
 	log.Debug().
 		Str("auth_token_iss", config.Issuer).
 		Str("auth_jwks_location", jwksLocation).
 		Msg("authenticator config loaded")
-	return middleware.Authenticator(&config)
+
+	return &config
 }
