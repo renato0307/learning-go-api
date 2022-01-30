@@ -22,6 +22,11 @@ const (
 )
 
 func main() {
+	r := configureGin()
+	r.Run()
+}
+
+func configureGin() *gin.Engine {
 	// Initialize Gin
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
@@ -30,7 +35,7 @@ func main() {
 	r.Use(middleware.Authorizer())
 	r.Use(gin.Recovery())
 
-	// Default route
+	// Default route>
 	r.GET("/", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "Hello, welcome to the learning-go-api",
@@ -48,8 +53,7 @@ func main() {
 	f := financelib.NewFinanceFunctions(useDefaultUrl, apiKey)
 	finance.SetRouterGroup(&f, base)
 
-	// Start serving request
-	r.Run()
+	return r
 }
 
 func getRequiredEnv(key string) string {

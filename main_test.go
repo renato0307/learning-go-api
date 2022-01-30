@@ -33,6 +33,59 @@ func TestGetRequiredEnvWithMissingEnvironment(t *testing.T) {
 
 func TestNewAuthenticator(t *testing.T) {
 	// arrange
+	issuer, sampleJwks := setupFakeAuthServer()
+
+	// act
+	config := newAuthenticatorConfig()
+
+	// assert
+	assert.Equal(t, []byte(sampleJwks), config.KeySetJSON)
+	assert.Equal(t, issuer, config.Issuer)
+}
+
+func TestNewAuthenticatorWithInvalidTokenUrl(t *testing.T) {
+	// arrange
+	setupFakeAuthServer()
+	os.Setenv(AUTH_JWKS_LOCATION, "invalid_url")
+
+	// act
+	assert.Panics(t, func() {
+		newAuthenticatorConfig()
+	})
+
+}
+
+func TestConfigureGin(t *testing.T) {
+	// arrange
+	setupFakeAuthServer()
+	os.Setenv(CURRCONV_API_KEY, "fake_key")
+
+	// act
+	r := configureGin()
+
+	// assert
+	assert.NotNil(t, r)
+	assert.Len(t, r.RouterGroup.Handlers, 4)
+}
+
+func TestGetRoot(t *testing.T) {
+	// arrange
+	setupFakeAuthServer()
+	os.Setenv(CURRCONV_API_KEY, "fake_key")
+	r := configureGin()
+
+	w := httptest.NewRecorder()
+
+	req, _ := http.NewRequest("GET", "/", nil)
+
+	// act
+	r.ServeHTTP(w, req)
+
+	// assert
+	assert.Equal(t, w.Code, http.StatusOK)
+}
+
+func setupFakeAuthServer() (string, string) {
 	issuer := "https://cognito-idp.$AWS_REGION.amazonaws.com/$POOL_ID"
 	sampleJwks := `
 	{
@@ -53,17 +106,12 @@ func TestNewAuthenticator(t *testing.T) {
 		}]
 	}`
 
-	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, sampleJwks)
-	}))
+	svr := httptest.NewServer(
+		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			fmt.Fprint(w, sampleJwks)
+		}))
 
 	os.Setenv(AUTH_TOKEN_ISS, issuer)
 	os.Setenv(AUTH_JWKS_LOCATION, svr.URL)
-
-	// act
-	config := newAuthenticatorConfig()
-
-	// assert
-	assert.Equal(t, []byte(sampleJwks), config.KeySetJSON)
-	assert.Equal(t, issuer, config.Issuer)
+	return issuer, sampleJwks
 }
